@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+      <head>
+            <meta charset="UTF-8" />
+            <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0"
+            />
+            <title>Cryptocurrency Prices</title>
+            <link
+                  rel="stylesheet"
+                  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+            />
+            <style>
+                  body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                  }
+                  table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 20px;
+                  }
+                  th,
+                  td {
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                        text-align: center;
+                  }
+                  th {
+                        background-color: #f2f2f2;
+                  }
+                  .result {
+                        margin-top: 20px;
+                  }
+            </style>
+      </head>
+      <body>
+            <h1>Cryptocurrency Prices</h1>
+            <h2>Get Cryptocurrency Stats</h2>
+            <form id="cryptoForm">
+                  <input
+                        type="text"
+                        id="coinInput"
+                        placeholder="Enter coin (bitcoin, ethereum, matic-network)"
+                        required
+                  />
+                  <button type="submit">Get Stats</button>
+            </form>
+
+            <div class="result" id="result"></div>
+            <h2>Get Price Deviation</h2>
+            <form id="deviationForm">
+                  <input
+                        type="text"
+                        id="deviationCoinInput"
+                        placeholder="Enter coin (bitcoin, ethereum, matic-network)"
+                        required
+                  />
+                  <button type="submit">Get Deviation</button>
+            </form>
+
+            <div class="deviationResult" id="deviationResult"></div>
+
+            <% Object.keys(groupedCryptos).forEach(date => { %>
+            <h2>Fetched on <%= date %></h2>
+            <table>
+                  <thead>
+                        <tr>
+                              <th>Name</th>
+                              <th>Price (USD)</th>
+                              <th>Market Cap (USD)</th>
+                              <th>24h Change (%)</th>
+                              <th>Timestamp</th>
+                        </tr>
+                  </thead>
+                  <tbody>
+                        <% groupedCryptos[date].forEach(crypto => { %>
+                        <tr>
+                              <td><%= crypto.name %></td>
+                              <td><%= crypto.price %></td>
+                              <td><%= crypto.marketCap %></td>
+                              <td><%= crypto.change24h %></td>
+                              <td><%= crypto.timestamp.toLocaleString() %></td>
+                        </tr>
+                        <% }); %>
+                  </tbody>
+            </table>
+            <% }); %>
+            <script>
+                  document
+                        .getElementById("cryptoForm")
+                        .addEventListener("submit", async function (event) {
+                              event.preventDefault(); // Prevent default form submission
+                              const coin =
+                                    document.getElementById("coinInput").value;
+
+                              try {
+                                    const response = await fetch(
+                                          `/stats?coin=${coin}`
+                                    );
+                                    if (!response.ok) {
+                                          throw new Error("Coin not found");
+                                    }
+                                    const data = await response.json();
+                                    document.getElementById(
+                                          "result"
+                                    ).innerHTML = `
+                    <h3>${
+                          coin.charAt(0).toUpperCase() + coin.slice(1)
+                    } Stats:</h3>
+                    <p>Price: $${data.price}</p>
+                    <p>Market Cap: $${data.marketCap}</p>
+                    <p>24h Change: ${data["24hChange"]}%</p>`;
+                              } catch (error) {
+                                    document.getElementById(
+                                          "result"
+                                    ).innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+                              }
+                        });
+
+                  document
+                        .getElementById("deviationForm")
+                        .addEventListener("submit", async function (event) {
+                              event.preventDefault();
+                              const coin =
+                                    document.getElementById(
+                                          "deviationCoinInput"
+                                    ).value;
+
+                              try {
+                                    const response = await fetch(
+                                          `/deviation?coin=${coin}`
+                                    );
+                                    if (!response.ok) {
+                                          throw new Error("Coin not found");
+                                    }
+                                    const data = await response.json();
+                                    document.getElementById(
+                                          "deviationResult"
+                                    ).innerHTML = `
+                    <h3>${
+                          coin.charAt(0).toUpperCase() + coin.slice(1)
+                    } Price Deviation:</h3>
+                    <p>Standard Deviation: $${data.deviation}</p>`;
+                              } catch (error) {
+                                    document.getElementById(
+                                          "deviationResult"
+                                    ).innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+                              }
+                        });
+            </script>
+      </body>
+</html>
