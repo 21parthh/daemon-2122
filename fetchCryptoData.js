@@ -25,6 +25,8 @@ const fetchCryptoData = async () => {
 
             console.log("Formatted Crypto Data:", cryptoData);
 
+            const timestamp = new Date();
+
             const cryptoEntries = Object.entries(cryptoData).map(
                   ([key, value]) => ({
                         name:
