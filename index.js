@@ -6,7 +6,7 @@ const Crypto = require("./Crypto");
 
 const app = express();
 app.set("view engine", "ejs");
-app.use(express.json()); 
+app.use(express.json());
 
 connectDB();
 
@@ -36,7 +36,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/stats", async (req, res) => {
-      const { coin } = req.query; 
+      const { coin } = req.query;
 
       if (!coin) {
             return res
@@ -81,8 +81,8 @@ app.get("/deviation", async (req, res) => {
             const formattedCoin = coin.charAt(0).toUpperCase() + coin.slice(1);
 
             const records = await Crypto.find({ name: formattedCoin })
-                  .sort({ timestamp: -1 }) 
-                  .limit(100); 
+                  .sort({ timestamp: -1 })
+                  .limit(100);
 
             if (records.length === 0) {
                   return res
