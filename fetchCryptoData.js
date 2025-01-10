@@ -25,7 +25,9 @@ const fetchCryptoData = async () => {
 
             console.log("Formatted Crypto Data:", cryptoData);
 
-            const timestamp = new Date();
+            const now = new Date();
+            const options = { timeZone: "Asia/Kolkata", hour12: false }; // Use hour12: false for 24-hour format
+            const istTime = now.toLocaleString("en-IN", options);
 
             const cryptoEntries = Object.entries(cryptoData).map(
                   ([key, value]) => ({
@@ -37,7 +39,7 @@ const fetchCryptoData = async () => {
                         price: value.usd,
                         marketCap: value.usd_market_cap,
                         change24h: value.usd_24h_change,
-                        timestamp: timestamp,
+                        timestamp: istTime,
                   })
             );
 
